@@ -1,3 +1,0 @@
-/home/omer/Dropbox/Coding/okengine/build/CMakeFiles/edit_cache.dir
-/home/omer/Dropbox/Coding/okengine/build/CMakeFiles/rebuild_cache.dir
-/home/omer/Dropbox/Coding/okengine/build/CMakeFiles/okeng.dir
