@@ -5,20 +5,22 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
-namespace Engine {
+namespace Engine
+{
 
-class Renderer {
-public:
-    Renderer(std::unique_ptr<sf::RenderWindow> window);
+    class Renderer
+    {
+    public:
+        Renderer(std::unique_ptr<sf::RenderWindow> window);
 
-    void setup();
-    void loop();
-    
-    void attach_game(std::unique_ptr<Game::Tebris> tebris);
+        void setup();
+        void loop();
 
-private:
-    std::unique_ptr<sf::RenderWindow> m_window;
-    std::unique_ptr<Game::Tebris> m_game;
-};
+        void attach_game(std::unique_ptr<Game::Tebris> tebris);
+
+    private:
+        std::unique_ptr<sf::RenderWindow> m_window;
+        std::unique_ptr<Game::Tebris> m_game;
+    };
 
 };

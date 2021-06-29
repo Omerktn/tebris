@@ -4,18 +4,21 @@
 #include <memory>
 #include <vector>
 
-namespace Game {
+namespace Game
+{
 
-class Tebris {
-public:
-    Tebris();
+    class Tebris
+    {
+    public:
+        Tebris();
 
-    void update();
+        void update();
 
-    std::vector<std::unique_ptr<sf::Drawable>> objects;
+        std::vector<std::unique_ptr<sf::Drawable>> objects;
 
-private:
-    
-};
+    private:
+        float shape1_scale = 1.0f;
+        bool shape1_dir = true;
+    };
 
 };

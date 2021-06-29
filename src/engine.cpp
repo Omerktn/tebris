@@ -28,15 +28,18 @@ namespace Engine
 
             m_window->clear();
 
-            for (auto& object: m_game->objects) {
+            for (auto &object : m_game->objects)
+            {
                 m_window->draw(*object);
             }
 
+            m_game->update();
             m_window->display();
         }
     }
 
-    void Renderer::attach_game(std::unique_ptr<Game::Tebris> tebris) {
+    void Renderer::attach_game(std::unique_ptr<Game::Tebris> tebris)
+    {
         m_game = std::move(tebris);
     }
 
