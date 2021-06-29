@@ -33,4 +33,5 @@
 
 # Others
 build/*
+!build/.gitkeep
 .vscode/
