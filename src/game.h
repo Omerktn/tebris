@@ -3,6 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <vector>
+#include <map>
+#include <string>
 
 namespace Game
 {
@@ -14,7 +16,7 @@ namespace Game
 
         void update();
 
-        std::vector<std::unique_ptr<sf::Drawable>> objects;
+        std::map<std::string, std::unique_ptr<sf::Drawable>> objects;
 
     private:
         float shape1_scale = 1.0f;

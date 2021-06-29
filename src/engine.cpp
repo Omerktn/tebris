@@ -30,7 +30,7 @@ namespace Engine
 
             for (auto &object : m_game->objects)
             {
-                m_window->draw(*object);
+                m_window->draw(*(object.second));
             }
 
             m_game->update();
