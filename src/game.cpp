@@ -31,7 +31,7 @@ namespace Game
         dynamic_cast<sf::Transformable *>(objects["shape2"].get())->rotate(0.25f);
 
         dynamic_cast<sf::Transformable *>(objects["shape1"].get())->setScale(shape1_scale, 1.0f);
-        
+
         if (shape1_dir)
             shape1_scale += 0.001f;
         else
