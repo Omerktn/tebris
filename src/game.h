@@ -1,15 +1,26 @@
 #pragma once
 
-namespace Game {
+#include <SFML/Graphics.hpp>
+#include <memory>
+#include <vector>
+#include <map>
+#include <string>
 
-class Tebris {
-public:
-    Tebris();
+namespace Game
+{
 
-    void update();
+    class Tebris
+    {
+    public:
+        Tebris();
 
-private:
+        void update();
 
-};
+        std::map<std::string, std::unique_ptr<sf::Drawable>> objects;
+
+    private:
+        float shape1_scale = 1.0f;
+        bool shape1_dir = true;
+    };
 
 };
