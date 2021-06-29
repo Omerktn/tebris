@@ -1,5 +1,9 @@
 #pragma once
 
+#include <SFML/Graphics.hpp>
+#include <memory>
+#include <vector>
+
 namespace Game {
 
 class Tebris {
@@ -8,8 +12,10 @@ public:
 
     void update();
 
-private:
+    std::vector<std::unique_ptr<sf::Drawable>> objects;
 
+private:
+    
 };
 
 };
