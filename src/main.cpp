@@ -11,8 +11,8 @@ int main()
 
   Engine::Renderer renderer(std::move(window));
 
-  auto game = std::make_unique<Game::Tebris>();
-  renderer.attach_game(std::move(game));
+  auto game = std::make_shared<Game::Tebris>();
+  renderer.attach_scene(game);
 
   renderer.setup();
   renderer.loop();

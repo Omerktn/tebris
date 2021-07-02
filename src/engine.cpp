@@ -38,9 +38,9 @@ namespace Engine
         }
     }
 
-    void Renderer::attach_game(std::unique_ptr<Game::Tebris> tebris)
+    void Renderer::attach_scene(std::shared_ptr<Game::Scene> tebris)
     {
-        m_game = std::move(tebris);
+        m_game = tebris;
     }
 
 };
