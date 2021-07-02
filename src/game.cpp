@@ -8,29 +8,40 @@
 namespace Game
 {
 
+    template<typename ShapeType, typename ...ArgType>
+    std::shared_ptr<ShapeType> Scene::add_shape(std::string name, ArgType...Args) {
+        auto shape = std::make_shared<ShapeType>(Args...);
+        objects.insert({name, shape});
+        return shape;
+    }
+
+    sf::Transformable * Scene::get_transformable(std::shared_ptr<sf::Drawable> shape) {
+        return dynamic_cast<sf::Transformable *>(shape.get());
+    }
+
     Tebris::Tebris()
     {
-        auto shape3 = std::make_unique<sf::CircleShape>(100.f, 8);
-        shape3->setFillColor(sf::Color::Yellow);
-        dynamic_cast<sf::Transformable *>(shape3.get())->setPosition(200.f, 200.f);
-        objects.insert({"shape3", std::move(shape3)});
+        auto shape1 = add_shape<sf::CircleShape>("shape1", 100.f, 8);
+        shape1->setFillColor(sf::Color::Yellow);
+        get_transformable(shape1)->setPosition(200.f, 200.f);
 
-        auto shape1 = std::make_unique<sf::CircleShape>(100.f);
-        shape1->setFillColor(sf::Color::Green);
-        dynamic_cast<sf::Transformable *>(shape1.get())->setPosition(300.f, 200.f);
-        objects.insert({"shape1", std::move(shape1)});
+        auto shape2 = add_shape<sf::CircleShape>("shape2", 100.f);
+        shape2->setFillColor(sf::Color::Green);
+        get_transformable(shape2)->setPosition(300.f, 200.f);
 
-        auto shape2 = std::make_unique<sf::RectangleShape>(sf::Vector2f(150.f, 50.f));
-        shape2->setFillColor(sf::Color::Blue);
-        dynamic_cast<sf::Transformable *>(shape2.get())->setPosition(300.f, 300.f);
-        objects.insert({"shape2", std::move(shape2)});
+        auto shape3 = add_shape<sf::RectangleShape>("shape3", sf::Vector2f(150.f, 50.f));
+        shape3->setFillColor(sf::Color::Blue);
+        get_transformable(shape3)->setPosition(300.f, 300.f);
+
+        auto shape4 = add_shape<sf::CircleShape>("shape4", 75.f);
+        get_transformable(shape4)->setPosition(25.f, 25.f);
     }
 
     void Tebris::update()
     {
-        dynamic_cast<sf::Transformable *>(objects["shape2"].get())->rotate(0.25f);
+        get_transformable(objects["shape2"])->rotate(0.25f);
 
-        dynamic_cast<sf::Transformable *>(objects["shape1"].get())->setScale(shape1_scale, 1.0f);
+        get_transformable(objects["shape1"])->setScale(shape1_scale, 1.0f);
 
         if (shape1_dir)
             shape1_scale += 0.001f;
