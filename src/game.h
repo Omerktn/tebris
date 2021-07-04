@@ -5,11 +5,13 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <array>
 
 namespace Game
 {
 
-    class Scene {
+    class Scene
+    {
     public:
         Scene() = default;
 
@@ -18,10 +20,10 @@ namespace Game
         std::map<std::string, std::shared_ptr<sf::Drawable>> objects;
 
     protected:
-        template<typename ShapeType, typename ...ArgType>
-        std::shared_ptr<ShapeType> add_shape(std::string name, ArgType...Args);
+        template <typename ShapeType, typename... ArgType>
+        std::shared_ptr<ShapeType> add_shape(std::string name, ArgType... Args);
 
-        sf::Transformable * get_transformable(std::shared_ptr<sf::Drawable> shape);
+        sf::Transformable *get_transformable(std::shared_ptr<sf::Drawable> shape);
     };
 
     class Tebris : public Scene
@@ -34,6 +36,11 @@ namespace Game
     private:
         float shape1_scale = 1.0f;
         bool shape1_dir = true;
+    };
+
+    struct BrickShape
+    {
+        std::array<std::array<int, 4>, 4> shape;
     };
 
 };
