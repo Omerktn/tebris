@@ -32,6 +32,8 @@ namespace Engine
             {
                 m_window->draw(*(object.second));
             }
+            
+            m_window->draw(m_game->one_sprite);
 
             m_game->update();
             m_window->display();
