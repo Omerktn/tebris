@@ -32,8 +32,14 @@ namespace Engine
             {
                 m_window->draw(*(object.second));
             }
-            
-            m_window->draw(m_game->one_sprite);
+
+            for (auto &object : m_game->brick_objects)
+            {
+                for (auto &sprite : object.sprites)
+                {
+                    m_window->draw(sprite);
+                }
+            }
 
             m_game->update();
             m_window->display();
