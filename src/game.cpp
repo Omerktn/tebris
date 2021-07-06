@@ -39,7 +39,7 @@ namespace Game
 
         auto yellow_texture = load_texture("../graphics/Yellow_box.png");
 
-        Brick a_brick(brick_shapes[4], yellow_texture, sf::Vector2f(25.0f, 25.0f));
+        Brick a_brick(brick_shapes[2], yellow_texture, sf::Vector2f(25.0f, 25.0f));
 
         a_brick.apply_sprite_positions();
 
@@ -58,7 +58,8 @@ namespace Game
             brick_objects[0].position += sf::Vector2f(0.0f, -0.1f);
             brick_objects[0].apply_sprite_positions();
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
         {
             brick_objects[0].position += sf::Vector2f(0.1f, 0.0f);
             brick_objects[0].apply_sprite_positions();
@@ -84,7 +85,7 @@ namespace Game
                     sprite.setTexture(*texture);
                     sprite.setScale(sf::Vector2f(single_brick_size, single_brick_size));
 
-                    sprite.setPosition(position + sf::Vector2f(i * single_brick_size, j * single_brick_size));
+                    sprite.setPosition(position + sf::Vector2f(j * single_brick_size, i * single_brick_size));
 
                     sprites.push_back(std::move(sprite));
                 }
@@ -104,7 +105,7 @@ namespace Game
                 if (cell)
                 {
                     sf::Sprite &sprite = sprites[sprite_index];
-                    sprite.setPosition(position + sf::Vector2f(i * single_brick_size, j * single_brick_size));
+                    sprite.setPosition(position + sf::Vector2f(j * single_brick_size, i * single_brick_size));
                     sprite_index++;
                 }
             }
@@ -140,14 +141,14 @@ namespace Game
         brick_shapes[4].shape[3] = {0, 0, 0, 0};
         // Z to right
         brick_shapes[5].shape[0] = {0, 1, 0, 0};
-        brick_shapes[5].shape[1] = {0, 1, 0, 0};
+        brick_shapes[5].shape[1] = {1, 1, 0, 0};
         brick_shapes[5].shape[2] = {1, 0, 0, 0};
-        brick_shapes[5].shape[3] = {1, 0, 0, 0};
+        brick_shapes[5].shape[3] = {0, 0, 0, 0};
         // Z to left
         brick_shapes[6].shape[0] = {1, 0, 0, 0};
-        brick_shapes[6].shape[1] = {1, 0, 0, 0};
+        brick_shapes[6].shape[1] = {1, 1, 0, 0};
         brick_shapes[6].shape[2] = {0, 1, 0, 0};
-        brick_shapes[6].shape[3] = {0, 1, 0, 0};
+        brick_shapes[6].shape[3] = {0, 0, 0, 0};
     }
 
 };
