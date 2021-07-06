@@ -22,92 +22,133 @@ namespace Game
         return dynamic_cast<sf::Transformable *>(shape.get());
     }
 
+    std::shared_ptr<sf::Texture> Scene::load_texture(std::string path)
+    {
+        auto texture = std::make_shared<sf::Texture>();
+        if (!texture->loadFromFile(path, sf::IntRect(0, 0, 1, 1)))
+        {
+            std::cerr << "Cannot load the texture: '" << path << "'\n";
+        }
+        textures.push_back(texture);
+        return texture;
+    }
 
     Tebris::Tebris()
     {
         initialize_bricks();
 
-        auto texture = std::make_shared<sf::Texture>();
-        if (!texture->loadFromFile("../graphics/Yellow_box.png", sf::IntRect(10, 10, 32, 32)))
-        {
-            std::cerr << "Cannot load textures!\n";
-        }
+        auto yellow_texture = load_texture("../graphics/Yellow_box.png");
 
-        one_sprite.setTexture(*texture);
-        one_sprite.scale(sf::Vector2f(10.0f, 10.0f)); 
+        Brick a_brick(brick_shapes[2], yellow_texture, sf::Vector2f(25.0f, 25.0f));
 
-        // TODO: Kuzenimin nişanına gitmem lazım, düzeltilecek bu sprite olayları.
+        a_brick.apply_sprite_positions();
 
-        auto shape1 = add_shape<sf::CircleShape>("shape1", 100.f, 8);
-        shape1->setFillColor(sf::Color::Yellow);
-        get_transformable(shape1)->setPosition(200.f, 200.f);
-
-        auto shape2 = add_shape<sf::CircleShape>("shape2", 100.f);
-        shape2->setFillColor(sf::Color::Green);
-        get_transformable(shape2)->setPosition(300.f, 200.f);
-
-        auto shape3 = add_shape<sf::RectangleShape>("shape3", sf::Vector2f(150.f, 50.f));
-        shape3->setFillColor(sf::Color::Blue);
-        get_transformable(shape3)->setPosition(300.f, 300.f);
-
-        //auto shape4 = add_shape<sf::CircleShape>("shape4", 75.f);
-        //get_transformable(shape4)->setPosition(25.f, 25.f);
+        brick_objects.push_back(a_brick);
     }
 
     void Tebris::update()
     {
-        get_transformable(objects["shape2"])->rotate(0.25f);
-
-        get_transformable(objects["shape1"])->setScale(shape1_scale, 1.0f);
-
-        if (shape1_dir)
-            shape1_scale += 0.001f;
-        else
-            shape1_scale -= 0.001f;
-
-        if (shape1_scale >= 2.0f || shape1_scale <= -2.0f)
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
         {
-            shape1_dir = !shape1_dir;
+            brick_objects[0].position += sf::Vector2f(0.0f, 0.1f);
+            brick_objects[0].apply_sprite_positions();
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        {
+            brick_objects[0].position += sf::Vector2f(0.0f, -0.1f);
+            brick_objects[0].apply_sprite_positions();
+        }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        {
+            brick_objects[0].position += sf::Vector2f(0.1f, 0.0f);
+            brick_objects[0].apply_sprite_positions();
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        {
+            brick_objects[0].position += sf::Vector2f(-0.1f, 0.0f);
+            brick_objects[0].apply_sprite_positions();
+        }
+    }
+
+    Brick::Brick(BrickShape t_shape, std::shared_ptr<sf::Texture> t_texture, sf::Vector2f t_pos)
+        : shape(t_shape), texture(t_texture), position(t_pos)
+    {
+        for (size_t i = 0; i < BRICK_SIZE; i++)
+        {
+            for (size_t j = 0; j < BRICK_SIZE; j++)
+            {
+                char cell = shape.shape[i][j];
+                if (cell)
+                {
+                    auto sprite = sf::Sprite();
+                    sprite.setTexture(*texture);
+                    sprite.setScale(sf::Vector2f(single_brick_size, single_brick_size));
+
+                    sprite.setPosition(position + sf::Vector2f(j * single_brick_size, i * single_brick_size));
+
+                    sprites.push_back(std::move(sprite));
+                }
+            }
+        }
+    };
+
+    void Brick::apply_sprite_positions()
+    {
+        size_t sprite_index = 0;
+
+        for (size_t i = 0; i < BRICK_SIZE; i++)
+        {
+            for (size_t j = 0; j < BRICK_SIZE; j++)
+            {
+                char cell = shape.shape[i][j];
+                if (cell)
+                {
+                    sf::Sprite &sprite = sprites[sprite_index];
+                    sprite.setPosition(position + sf::Vector2f(j * single_brick_size, i * single_brick_size));
+                    sprite_index++;
+                }
+            }
         }
     }
 
     void Tebris::initialize_bricks()
     {
         // Long boy
-        bricks[0].shape[0] = {1, 0, 0, 0};
-        bricks[0].shape[1] = {1, 0, 0, 0};
-        bricks[0].shape[2] = {1, 0, 0, 0};
-        bricks[0].shape[3] = {1, 0, 0, 0};
+        brick_shapes[0].shape[0] = {1, 0, 0, 0};
+        brick_shapes[0].shape[1] = {1, 0, 0, 0};
+        brick_shapes[0].shape[2] = {1, 0, 0, 0};
+        brick_shapes[0].shape[3] = {1, 0, 0, 0};
         // Square
-        bricks[1].shape[0] = {1, 1, 0, 0};
-        bricks[1].shape[1] = {1, 1, 0, 0};
-        bricks[1].shape[2] = {0, 0, 0, 0};
-        bricks[1].shape[3] = {0, 0, 0, 0};
+        brick_shapes[1].shape[0] = {1, 1, 0, 0};
+        brick_shapes[1].shape[1] = {1, 1, 0, 0};
+        brick_shapes[1].shape[2] = {0, 0, 0, 0};
+        brick_shapes[1].shape[3] = {0, 0, 0, 0};
         // L
-        bricks[2].shape[0] = {1, 0, 0, 0};
-        bricks[2].shape[1] = {1, 0, 0, 0};
-        bricks[2].shape[2] = {1, 1, 0, 0};
-        bricks[2].shape[3] = {0, 0, 0, 0};
+        brick_shapes[2].shape[0] = {1, 0, 0, 0};
+        brick_shapes[2].shape[1] = {1, 0, 0, 0};
+        brick_shapes[2].shape[2] = {1, 1, 0, 0};
+        brick_shapes[2].shape[3] = {0, 0, 0, 0};
         // Half-cross
-        bricks[3].shape[0] = {1, 0, 0, 0};
-        bricks[3].shape[1] = {1, 1, 0, 0};
-        bricks[3].shape[2] = {1, 0, 0, 0};
-        bricks[3].shape[3] = {0, 0, 0, 0};
+        brick_shapes[3].shape[0] = {1, 0, 0, 0};
+        brick_shapes[3].shape[1] = {1, 1, 0, 0};
+        brick_shapes[3].shape[2] = {1, 0, 0, 0};
+        brick_shapes[3].shape[3] = {0, 0, 0, 0};
         // Reversed L shape
-        bricks[4].shape[0] = {0, 1, 0, 0};
-        bricks[4].shape[1] = {0, 1, 0, 0};
-        bricks[4].shape[2] = {1, 1, 0, 0};
-        bricks[4].shape[3] = {0, 0, 0, 0};
+        brick_shapes[4].shape[0] = {0, 1, 0, 0};
+        brick_shapes[4].shape[1] = {0, 1, 0, 0};
+        brick_shapes[4].shape[2] = {1, 1, 0, 0};
+        brick_shapes[4].shape[3] = {0, 0, 0, 0};
         // Z to right
-        bricks[5].shape[0] = {0, 1, 0, 0};
-        bricks[5].shape[1] = {0, 1, 0, 0};
-        bricks[5].shape[2] = {1, 0, 0, 0};
-        bricks[5].shape[3] = {1, 0, 0, 0};
+        brick_shapes[5].shape[0] = {0, 1, 0, 0};
+        brick_shapes[5].shape[1] = {1, 1, 0, 0};
+        brick_shapes[5].shape[2] = {1, 0, 0, 0};
+        brick_shapes[5].shape[3] = {0, 0, 0, 0};
         // Z to left
-        bricks[6].shape[0] = {1, 0, 0, 0};
-        bricks[6].shape[1] = {1, 0, 0, 0};
-        bricks[6].shape[2] = {0, 1, 0, 0};
-        bricks[6].shape[3] = {0, 1, 0, 0};
+        brick_shapes[6].shape[0] = {1, 0, 0, 0};
+        brick_shapes[6].shape[1] = {1, 1, 0, 0};
+        brick_shapes[6].shape[2] = {0, 1, 0, 0};
+        brick_shapes[6].shape[3] = {0, 0, 0, 0};
     }
 
 };
