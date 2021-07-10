@@ -1,10 +1,13 @@
 #include "game.h"
+#include "engine.h"
 
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <vector>
+#include <unordered_map>
 #include <utility>
 #include <iostream>
+#include <chrono>
 
 namespace Game
 {
@@ -48,27 +51,47 @@ namespace Game
 
     void Tebris::update()
     {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && is_key_listenable(sf::Keyboard::Down))
         {
-            brick_objects[0].position += sf::Vector2f(0.0f, 0.1f);
+            brick_objects[0].move_down();
             brick_objects[0].apply_sprite_positions();
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && is_key_listenable(sf::Keyboard::Up))
         {
-            brick_objects[0].position += sf::Vector2f(0.0f, -0.1f);
+            brick_objects[0].move_up();
             brick_objects[0].apply_sprite_positions();
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && is_key_listenable(sf::Keyboard::Right))
         {
-            brick_objects[0].position += sf::Vector2f(0.1f, 0.0f);
+            brick_objects[0].move_right();
             brick_objects[0].apply_sprite_positions();
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && is_key_listenable(sf::Keyboard::Left))
         {
-            brick_objects[0].position += sf::Vector2f(-0.1f, 0.0f);
+            brick_objects[0].move_left();
             brick_objects[0].apply_sprite_positions();
         }
+    }
+
+    bool Tebris::is_key_listenable(sf::Keyboard::Key key)
+    {
+        auto it = key_timers.find(key);
+
+        if (it == key_timers.end())
+        {
+            key_timers.insert({key, Timer(key_delay_ms)});
+            return true;
+        }
+
+        auto &timer = it->second;
+        if (timer.is_finished())
+        {
+            timer.restart();
+            return true;
+        }
+
+        return false;
     }
 
     Brick::Brick(BrickShape t_shape, std::shared_ptr<sf::Texture> t_texture, sf::Vector2f t_pos)
@@ -92,6 +115,26 @@ namespace Game
             }
         }
     };
+
+    void Brick::move_right()
+    {
+        position += sf::Vector2f(single_brick_size, 0.0f);
+    }
+
+    void Brick::move_left()
+    {
+        position += sf::Vector2f(-single_brick_size, 0.0f);
+    }
+
+    void Brick::move_up()
+    {
+        position += sf::Vector2f(0.0f, -single_brick_size);
+    }
+
+    void Brick::move_down()
+    {
+        position += sf::Vector2f(0.0f, single_brick_size);
+    }
 
     void Brick::apply_sprite_positions()
     {
@@ -149,6 +192,37 @@ namespace Game
         brick_shapes[6].shape[1] = {1, 1, 0, 0};
         brick_shapes[6].shape[2] = {0, 1, 0, 0};
         brick_shapes[6].shape[3] = {0, 0, 0, 0};
+    }
+
+    Timer::Timer(int period_ms) : m_period_ms(period_ms)
+    {
+        using namespace std::chrono;
+        last_period_started = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+    }
+
+    void Timer::restart()
+    {
+        using namespace std::chrono;
+        last_period_started = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+    }
+
+    bool Timer::is_finished()
+    {
+        using namespace std::chrono;
+        const auto now_t = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+
+        if ((now_t - last_period_started) > std::chrono::milliseconds(m_period_ms))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    void Timer::change_period(int new_period_ms)
+    {
+        m_period_ms = new_period_ms;
+        restart();
     }
 
 };

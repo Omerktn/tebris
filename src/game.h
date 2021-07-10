@@ -4,13 +4,32 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <string>
 #include <array>
+#include <chrono>
 
 #define BRICK_SIZE 4
 
 namespace Game
 {
+
+    class Timer
+    {
+    public:
+        Timer() = delete;
+        Timer(int period_ms);
+
+        void restart();
+        bool is_finished();
+
+        void change_period(int new_period_ms);
+
+    private:
+        int m_period_ms;
+
+        std::chrono::milliseconds last_period_started;
+    };
 
     struct BrickShape
     {
@@ -29,6 +48,11 @@ namespace Game
         std::vector<sf::Sprite> sprites;
 
         void apply_sprite_positions();
+
+        void move_right();
+        void move_left();
+        void move_up();
+        void move_down();
 
     private:
         constexpr static const float single_brick_size = 50.0f;
@@ -62,6 +86,11 @@ namespace Game
         Tebris();
 
         void update() override;
+
+    private:
+        bool is_key_listenable(sf::Keyboard::Key key);
+        std::unordered_map<sf::Keyboard::Key, Timer> key_timers;
+        constexpr static int key_delay_ms = 125;
 
     private:
         std::array<BrickShape, 7> brick_shapes;
