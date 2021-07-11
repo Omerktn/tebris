@@ -221,51 +221,48 @@ namespace Game
             }
         }
 
+        keep_looking = true;
         for (int j = BRICK_SIZE - 1; j >= 0 && keep_looking; --j)
         {
             for (int i = BRICK_SIZE - 1; i >= 0 && keep_looking; --i)
             {
-                if (!shape[i][j])
+                if (shape[i][j])
                 {
                     width = j + 1;
                     keep_looking = false;
                 }
             }
         }
-
-        std::cout << "H: " << height << "  W: " << width << '\n';
     }
 
-
-Timer::Timer(int period_ms) : m_period_ms(period_ms)
-{
-    using namespace std::chrono;
-    last_period_started = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-}
-
-void Timer::restart()
-{
-    using namespace std::chrono;
-    last_period_started = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-}
-
-bool Timer::is_finished()
-{
-    using namespace std::chrono;
-    const auto now_t = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-
-    if ((now_t - last_period_started) > std::chrono::milliseconds(m_period_ms))
+    Timer::Timer(int period_ms) : m_period_ms(period_ms)
     {
-        return true;
+        using namespace std::chrono;
+        last_period_started = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
     }
 
-    return false;
-}
+    void Timer::restart()
+    {
+        using namespace std::chrono;
+        last_period_started = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+    }
 
-void Timer::change_period(int new_period_ms)
-{
-    m_period_ms = new_period_ms;
-    restart();
-}
-}
-;
+    bool Timer::is_finished()
+    {
+        using namespace std::chrono;
+        const auto now_t = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+
+        if ((now_t - last_period_started) > std::chrono::milliseconds(m_period_ms))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    void Timer::change_period(int new_period_ms)
+    {
+        m_period_ms = new_period_ms;
+        restart();
+    }
+};
