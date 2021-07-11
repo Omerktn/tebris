@@ -163,28 +163,15 @@ namespace Game
 
     void BrickShape::rotate_clockwise()
     {
-        // Consider all squares one by one
-        for (int x = 0; x < BRICK_SIZE / 2; x++)
+        for (int i = 0; i < BRICK_SIZE / 2; i++)
         {
-            // Consider elements in group
-            // of 4 in current square
-            for (int y = x; y < BRICK_SIZE - x - 1; y++)
+            for (int j = i; j < BRICK_SIZE - i - 1; j++)
             {
-                // Store current cell in
-                // temp variable
-                int temp = shape[x][y];
-
-                // Move values from right to top
-                shape[x][y] = shape[y][BRICK_SIZE - 1 - x];
-
-                // Move values from bottom to right
-                shape[y][BRICK_SIZE - 1 - x] = shape[BRICK_SIZE - 1 - x][BRICK_SIZE - 1 - y];
-
-                // Move values from left to bottom
-                shape[BRICK_SIZE - 1 - x][BRICK_SIZE - 1 - y] = shape[BRICK_SIZE - 1 - y][x];
-
-                // Assign temp to left
-                shape[BRICK_SIZE - 1 - y][x] = temp;
+                int temp = shape[i][j];
+                shape[i][j] = shape[BRICK_SIZE - 1 - j][i];
+                shape[BRICK_SIZE - 1 - j][i] = shape[BRICK_SIZE - 1 - i][BRICK_SIZE - 1 - j];
+                shape[BRICK_SIZE - 1 - i][BRICK_SIZE - 1 - j] = shape[j][BRICK_SIZE - 1 - i];
+                shape[j][BRICK_SIZE - 1 - i] = temp;
             }
         }
     }

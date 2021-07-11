@@ -39,6 +39,7 @@ namespace Game
 
         void calculate_height_and_width();
         void rotate_clockwise();
+        void move_upper_left();
     };
 
     class Brick
