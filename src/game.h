@@ -31,15 +31,20 @@ namespace Game
         std::chrono::milliseconds last_period_started;
     };
 
-    struct BrickShape
+    class BrickShape
     {
+    public:
         std::array<std::array<char, BRICK_SIZE>, BRICK_SIZE> shape = {0};
         size_t height;
         size_t width;
 
-        void calculate_height_and_width();
         void rotate_clockwise();
-        void move_upper_left();
+        void calculate_height_and_width();
+        void align_to_upper_left();
+
+    private:
+        void slide_left();
+        void slide_up();
     };
 
     class Brick

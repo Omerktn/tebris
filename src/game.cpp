@@ -42,7 +42,7 @@ namespace Game
 
         auto yellow_texture = load_texture("../graphics/Yellow_box.png");
 
-        Brick a_brick(brick_shapes[2], yellow_texture, sf::Vector2f(25.0f, 25.0f));
+        Brick a_brick(brick_shapes[3], yellow_texture, sf::Vector2f(25.0f, 25.0f));
 
         a_brick.apply_sprite_positions();
 
@@ -172,6 +172,87 @@ namespace Game
                 shape[BRICK_SIZE - 1 - j][i] = shape[BRICK_SIZE - 1 - i][BRICK_SIZE - 1 - j];
                 shape[BRICK_SIZE - 1 - i][BRICK_SIZE - 1 - j] = shape[j][BRICK_SIZE - 1 - i];
                 shape[j][BRICK_SIZE - 1 - i] = temp;
+            }
+        }
+
+        align_to_upper_left();
+
+        size_t height_tmp = height;
+        height = width;
+        width = height_tmp;
+    }
+
+    void BrickShape::slide_left()
+    {
+        for (size_t j = 0; j < BRICK_SIZE - 1; j++)
+        {
+            for (size_t i = 0; i < BRICK_SIZE; i++)
+            {
+                shape[i][j] = shape[i][j + 1];
+            }
+        }
+
+        for (size_t i = 0; i < BRICK_SIZE; i++)
+        {
+            shape[i][BRICK_SIZE - 1] = 0;
+        }
+    }
+
+    void BrickShape::slide_up()
+    {
+        for (size_t i = 0; i < BRICK_SIZE - 1; i++)
+        {
+            for (size_t j = 0; j < BRICK_SIZE; j++)
+            {
+                shape[i][j] = shape[i + 1][j];
+            }
+        }
+
+        for (size_t j = 0; j < BRICK_SIZE; j++)
+        {
+            shape[BRICK_SIZE - 1][j] = 0;
+        }
+    }
+
+    void BrickShape::align_to_upper_left()
+    {
+        // Align to left
+        size_t i = 0;
+        while (true)
+        {
+            if (shape[i][0])
+            {
+                break;
+            }
+
+            if (i == BRICK_SIZE - 1)
+            {
+                slide_left();
+                i = 0;
+            }
+            else
+            {
+                ++i;
+            }
+        }
+
+        // Align to upper
+        size_t j = 0;
+        while (true)
+        {
+            if (shape[0][j])
+            {
+                break;
+            }
+
+            if (j == BRICK_SIZE - 1)
+            {
+                slide_up();
+                j = 0;
+            }
+            else
+            {
+                ++j;
             }
         }
     }
