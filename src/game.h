@@ -34,6 +34,10 @@ namespace Game
     struct BrickShape
     {
         std::array<std::array<char, BRICK_SIZE>, BRICK_SIZE> shape = {0};
+        size_t height;
+        size_t width;
+
+        void calculate_height_and_width();
     };
 
     class Brick

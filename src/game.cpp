@@ -192,37 +192,80 @@ namespace Game
         brick_shapes[6].shape[1] = {1, 1, 0, 0};
         brick_shapes[6].shape[2] = {0, 1, 0, 0};
         brick_shapes[6].shape[3] = {0, 0, 0, 0};
+
+        brick_shapes[0].calculate_height_and_width();
+        brick_shapes[1].calculate_height_and_width();
+        brick_shapes[2].calculate_height_and_width();
+        brick_shapes[3].calculate_height_and_width();
+        brick_shapes[4].calculate_height_and_width();
+        brick_shapes[5].calculate_height_and_width();
+        brick_shapes[6].calculate_height_and_width();
     }
 
-    Timer::Timer(int period_ms) : m_period_ms(period_ms)
+    void BrickShape::calculate_height_and_width()
     {
-        using namespace std::chrono;
-        last_period_started = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-    }
+        height = 0;
+        width = 0;
 
-    void Timer::restart()
-    {
-        using namespace std::chrono;
-        last_period_started = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-    }
+        bool keep_looking = true;
 
-    bool Timer::is_finished()
-    {
-        using namespace std::chrono;
-        const auto now_t = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
-
-        if ((now_t - last_period_started) > std::chrono::milliseconds(m_period_ms))
+        for (int i = BRICK_SIZE - 1; i >= 0 && keep_looking; --i)
         {
-            return true;
+            for (int j = BRICK_SIZE - 1; j >= 0 && keep_looking; --j)
+            {
+                if (shape[i][j])
+                {
+                    height = i + 1;
+                    keep_looking = false;
+                }
+            }
         }
 
-        return false;
+        for (int j = BRICK_SIZE - 1; j >= 0 && keep_looking; --j)
+        {
+            for (int i = BRICK_SIZE - 1; i >= 0 && keep_looking; --i)
+            {
+                if (!shape[i][j])
+                {
+                    width = j + 1;
+                    keep_looking = false;
+                }
+            }
+        }
+
+        std::cout << "H: " << height << "  W: " << width << '\n';
     }
 
-    void Timer::change_period(int new_period_ms)
+
+Timer::Timer(int period_ms) : m_period_ms(period_ms)
+{
+    using namespace std::chrono;
+    last_period_started = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+}
+
+void Timer::restart()
+{
+    using namespace std::chrono;
+    last_period_started = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+}
+
+bool Timer::is_finished()
+{
+    using namespace std::chrono;
+    const auto now_t = duration_cast<milliseconds>(system_clock::now().time_since_epoch());
+
+    if ((now_t - last_period_started) > std::chrono::milliseconds(m_period_ms))
     {
-        m_period_ms = new_period_ms;
-        restart();
+        return true;
     }
 
-};
+    return false;
+}
+
+void Timer::change_period(int new_period_ms)
+{
+    m_period_ms = new_period_ms;
+    restart();
+}
+}
+;
