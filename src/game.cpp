@@ -72,15 +72,41 @@ namespace Game
             brick_objects[0].move_left();
             brick_objects[0].apply_sprite_positions();
         }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R) && is_key_listenable(sf::Keyboard::R, 300))
+        {
+            brick_objects[0].shape.rotate_clockwise();
+            brick_objects[0].apply_sprite_positions();
+        }
     }
 
-    bool Tebris::is_key_listenable(sf::Keyboard::Key key)
+    bool Scene::is_key_listenable(sf::Keyboard::Key key)
     {
         auto it = key_timers.find(key);
 
         if (it == key_timers.end())
         {
             key_timers.insert({key, Timer(key_delay_ms)});
+            return true;
+        }
+
+        auto &timer = it->second;
+        if (timer.is_finished())
+        {
+            timer.restart();
+            return true;
+        }
+
+        return false;
+    }
+
+    bool Scene::is_key_listenable(sf::Keyboard::Key key, int delay_ms)
+    {
+        auto it = key_timers.find(key);
+
+        if (it == key_timers.end())
+        {
+            key_timers.insert({key, Timer(delay_ms)});
             return true;
         }
 
@@ -151,6 +177,34 @@ namespace Game
                     sprite.setPosition(position + sf::Vector2f(j * single_brick_size, i * single_brick_size));
                     sprite_index++;
                 }
+            }
+        }
+    }
+
+    void BrickShape::rotate_clockwise()
+    {
+        // Consider all squares one by one
+        for (int x = 0; x < BRICK_SIZE / 2; x++)
+        {
+            // Consider elements in group
+            // of 4 in current square
+            for (int y = x; y < BRICK_SIZE - x - 1; y++)
+            {
+                // Store current cell in
+                // temp variable
+                int temp = shape[x][y];
+
+                // Move values from right to top
+                shape[x][y] = shape[y][BRICK_SIZE - 1 - x];
+
+                // Move values from bottom to right
+                shape[y][BRICK_SIZE - 1 - x] = shape[BRICK_SIZE - 1 - x][BRICK_SIZE - 1 - y];
+
+                // Move values from left to bottom
+                shape[BRICK_SIZE - 1 - x][BRICK_SIZE - 1 - y] = shape[BRICK_SIZE - 1 - y][x];
+
+                // Assign temp to left
+                shape[BRICK_SIZE - 1 - y][x] = temp;
             }
         }
     }
