@@ -31,9 +31,20 @@ namespace Game
         std::chrono::milliseconds last_period_started;
     };
 
-    struct BrickShape
+    class BrickShape
     {
+    public:
         std::array<std::array<char, BRICK_SIZE>, BRICK_SIZE> shape = {0};
+        size_t height;
+        size_t width;
+
+        void rotate_clockwise();
+        void calculate_height_and_width();
+        void align_to_upper_left();
+
+    private:
+        void slide_left();
+        void slide_up();
     };
 
     class Brick
@@ -76,8 +87,13 @@ namespace Game
 
         std::shared_ptr<sf::Texture> load_texture(std::string path);
 
+        bool is_key_listenable(sf::Keyboard::Key key, int delay_ms = default_delay_ms);
+
     private:
         std::vector<std::shared_ptr<sf::Texture>> textures;
+
+        std::unordered_map<sf::Keyboard::Key, Timer> key_timers;
+        constexpr static int default_delay_ms = 125;
     };
 
     class Tebris : public Scene
@@ -86,11 +102,6 @@ namespace Game
         Tebris();
 
         void update() override;
-
-    private:
-        bool is_key_listenable(sf::Keyboard::Key key);
-        std::unordered_map<sf::Keyboard::Key, Timer> key_timers;
-        constexpr static int key_delay_ms = 125;
 
     private:
         std::array<BrickShape, 7> brick_shapes;

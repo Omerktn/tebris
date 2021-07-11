@@ -42,7 +42,7 @@ namespace Game
 
         auto yellow_texture = load_texture("../graphics/Yellow_box.png");
 
-        Brick a_brick(brick_shapes[2], yellow_texture, sf::Vector2f(25.0f, 25.0f));
+        Brick a_brick(brick_shapes[3], yellow_texture, sf::Vector2f(25.0f, 25.0f));
 
         a_brick.apply_sprite_positions();
 
@@ -72,15 +72,21 @@ namespace Game
             brick_objects[0].move_left();
             brick_objects[0].apply_sprite_positions();
         }
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R) && is_key_listenable(sf::Keyboard::R, 200))
+        {
+            brick_objects[0].shape.rotate_clockwise();
+            brick_objects[0].apply_sprite_positions();
+        }
     }
 
-    bool Tebris::is_key_listenable(sf::Keyboard::Key key)
+    bool Scene::is_key_listenable(sf::Keyboard::Key key, int delay_ms)
     {
         auto it = key_timers.find(key);
 
         if (it == key_timers.end())
         {
-            key_timers.insert({key, Timer(key_delay_ms)});
+            key_timers.insert({key, Timer(delay_ms)});
             return true;
         }
 
@@ -155,6 +161,102 @@ namespace Game
         }
     }
 
+    void BrickShape::rotate_clockwise()
+    {
+        for (int i = 0; i < BRICK_SIZE / 2; i++)
+        {
+            for (int j = i; j < BRICK_SIZE - i - 1; j++)
+            {
+                int temp = shape[i][j];
+                shape[i][j] = shape[BRICK_SIZE - 1 - j][i];
+                shape[BRICK_SIZE - 1 - j][i] = shape[BRICK_SIZE - 1 - i][BRICK_SIZE - 1 - j];
+                shape[BRICK_SIZE - 1 - i][BRICK_SIZE - 1 - j] = shape[j][BRICK_SIZE - 1 - i];
+                shape[j][BRICK_SIZE - 1 - i] = temp;
+            }
+        }
+
+        align_to_upper_left();
+
+        size_t height_tmp = height;
+        height = width;
+        width = height_tmp;
+    }
+
+    void BrickShape::slide_left()
+    {
+        for (size_t j = 0; j < BRICK_SIZE - 1; j++)
+        {
+            for (size_t i = 0; i < BRICK_SIZE; i++)
+            {
+                shape[i][j] = shape[i][j + 1];
+            }
+        }
+
+        for (size_t i = 0; i < BRICK_SIZE; i++)
+        {
+            shape[i][BRICK_SIZE - 1] = 0;
+        }
+    }
+
+    void BrickShape::slide_up()
+    {
+        for (size_t i = 0; i < BRICK_SIZE - 1; i++)
+        {
+            for (size_t j = 0; j < BRICK_SIZE; j++)
+            {
+                shape[i][j] = shape[i + 1][j];
+            }
+        }
+
+        for (size_t j = 0; j < BRICK_SIZE; j++)
+        {
+            shape[BRICK_SIZE - 1][j] = 0;
+        }
+    }
+
+    void BrickShape::align_to_upper_left()
+    {
+        // Align to left
+        size_t i = 0;
+        while (true)
+        {
+            if (shape[i][0])
+            {
+                break;
+            }
+
+            if (i == BRICK_SIZE - 1)
+            {
+                slide_left();
+                i = 0;
+            }
+            else
+            {
+                ++i;
+            }
+        }
+
+        // Align to upper
+        size_t j = 0;
+        while (true)
+        {
+            if (shape[0][j])
+            {
+                break;
+            }
+
+            if (j == BRICK_SIZE - 1)
+            {
+                slide_up();
+                j = 0;
+            }
+            else
+            {
+                ++j;
+            }
+        }
+    }
+
     void Tebris::initialize_bricks()
     {
         // Long boy
@@ -192,6 +294,47 @@ namespace Game
         brick_shapes[6].shape[1] = {1, 1, 0, 0};
         brick_shapes[6].shape[2] = {0, 1, 0, 0};
         brick_shapes[6].shape[3] = {0, 0, 0, 0};
+
+        brick_shapes[0].calculate_height_and_width();
+        brick_shapes[1].calculate_height_and_width();
+        brick_shapes[2].calculate_height_and_width();
+        brick_shapes[3].calculate_height_and_width();
+        brick_shapes[4].calculate_height_and_width();
+        brick_shapes[5].calculate_height_and_width();
+        brick_shapes[6].calculate_height_and_width();
+    }
+
+    void BrickShape::calculate_height_and_width()
+    {
+        height = 0;
+        width = 0;
+
+        bool keep_looking = true;
+
+        for (int i = BRICK_SIZE - 1; i >= 0 && keep_looking; --i)
+        {
+            for (int j = BRICK_SIZE - 1; j >= 0 && keep_looking; --j)
+            {
+                if (shape[i][j])
+                {
+                    height = i + 1;
+                    keep_looking = false;
+                }
+            }
+        }
+
+        keep_looking = true;
+        for (int j = BRICK_SIZE - 1; j >= 0 && keep_looking; --j)
+        {
+            for (int i = BRICK_SIZE - 1; i >= 0 && keep_looking; --i)
+            {
+                if (shape[i][j])
+                {
+                    width = j + 1;
+                    keep_looking = false;
+                }
+            }
+        }
     }
 
     Timer::Timer(int period_ms) : m_period_ms(period_ms)
@@ -224,5 +367,4 @@ namespace Game
         m_period_ms = new_period_ms;
         restart();
     }
-
 };
