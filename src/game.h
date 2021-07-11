@@ -81,14 +81,13 @@ namespace Game
 
         std::shared_ptr<sf::Texture> load_texture(std::string path);
 
-        bool is_key_listenable(sf::Keyboard::Key key);
-        bool is_key_listenable(sf::Keyboard::Key key, int delay_ms);
+        bool is_key_listenable(sf::Keyboard::Key key, int delay_ms = default_delay_ms);
 
     private:
         std::vector<std::shared_ptr<sf::Texture>> textures;
 
         std::unordered_map<sf::Keyboard::Key, Timer> key_timers;
-        constexpr static int key_delay_ms = 125;
+        constexpr static int default_delay_ms = 125;
     };
 
     class Tebris : public Scene

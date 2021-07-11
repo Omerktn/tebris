@@ -73,31 +73,11 @@ namespace Game
             brick_objects[0].apply_sprite_positions();
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R) && is_key_listenable(sf::Keyboard::R, 300))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R) && is_key_listenable(sf::Keyboard::R, 200))
         {
             brick_objects[0].shape.rotate_clockwise();
             brick_objects[0].apply_sprite_positions();
         }
-    }
-
-    bool Scene::is_key_listenable(sf::Keyboard::Key key)
-    {
-        auto it = key_timers.find(key);
-
-        if (it == key_timers.end())
-        {
-            key_timers.insert({key, Timer(key_delay_ms)});
-            return true;
-        }
-
-        auto &timer = it->second;
-        if (timer.is_finished())
-        {
-            timer.restart();
-            return true;
-        }
-
-        return false;
     }
 
     bool Scene::is_key_listenable(sf::Keyboard::Key key, int delay_ms)
