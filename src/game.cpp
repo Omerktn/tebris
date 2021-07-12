@@ -9,6 +9,8 @@
 #include <iostream>
 #include <chrono>
 
+#define KEY_PRESSED(key) sf::Keyboard::isKeyPressed(sf::Keyboard::key)
+
 namespace Game
 {
 
@@ -51,29 +53,29 @@ namespace Game
 
     void Tebris::update()
     {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && is_key_listenable(sf::Keyboard::Down))
+        if ((KEY_PRESSED(Down) || KEY_PRESSED(S)) && is_key_listenable(sf::Keyboard::Down))
         {
             current_brick->move_down();
             current_brick->apply_sprite_positions();
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && is_key_listenable(sf::Keyboard::Up))
+        else if ((KEY_PRESSED(Up) || KEY_PRESSED(W)) && is_key_listenable(sf::Keyboard::Up))
         {
             current_brick->move_up();
             current_brick->apply_sprite_positions();
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && is_key_listenable(sf::Keyboard::Right))
+        if ((KEY_PRESSED(Right) || KEY_PRESSED(D)) && is_key_listenable(sf::Keyboard::Right))
         {
             current_brick->move_right();
             current_brick->apply_sprite_positions();
         }
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && is_key_listenable(sf::Keyboard::Left))
+        else if ((KEY_PRESSED(Left) || KEY_PRESSED(A)) && is_key_listenable(sf::Keyboard::Left))
         {
             current_brick->move_left();
             current_brick->apply_sprite_positions();
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R) && is_key_listenable(sf::Keyboard::R, 200))
+        if (KEY_PRESSED(R) && is_key_listenable(sf::Keyboard::R, 200))
         {
             current_brick->shape.rotate_clockwise();
             current_brick->apply_sprite_positions();
