@@ -43,40 +43,40 @@ namespace Game
         auto yellow_texture = load_texture("../graphics/Yellow_box.png");
 
         Brick a_brick(brick_shapes[3], yellow_texture, sf::Vector2f(50.0f, 50.0f));
-
         a_brick.apply_sprite_positions();
-
         brick_objects.push_back(a_brick);
+
+        current_brick = brick_objects.begin();
     }
 
     void Tebris::update()
     {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && is_key_listenable(sf::Keyboard::Down))
         {
-            brick_objects[0].move_down();
-            brick_objects[0].apply_sprite_positions();
+            current_brick->move_down();
+            current_brick->apply_sprite_positions();
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && is_key_listenable(sf::Keyboard::Up))
         {
-            brick_objects[0].move_up();
-            brick_objects[0].apply_sprite_positions();
+            current_brick->move_up();
+            current_brick->apply_sprite_positions();
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && is_key_listenable(sf::Keyboard::Right))
         {
-            brick_objects[0].move_right();
-            brick_objects[0].apply_sprite_positions();
+            current_brick->move_right();
+            current_brick->apply_sprite_positions();
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && is_key_listenable(sf::Keyboard::Left))
         {
-            brick_objects[0].move_left();
-            brick_objects[0].apply_sprite_positions();
+            current_brick->move_left();
+            current_brick->apply_sprite_positions();
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::R) && is_key_listenable(sf::Keyboard::R, 200))
         {
-            brick_objects[0].shape.rotate_clockwise();
-            brick_objects[0].apply_sprite_positions();
+            current_brick->shape.rotate_clockwise();
+            current_brick->apply_sprite_positions();
         }
     }
 
@@ -103,9 +103,9 @@ namespace Game
     Brick::Brick(BrickShape t_shape, std::shared_ptr<sf::Texture> t_texture, sf::Vector2f t_pos)
         : shape(t_shape), texture(t_texture), position(t_pos)
     {
-        for (size_t i = 0; i < BRICK_SIZE; i++)
+        for (size_t i = 0; i < BRICK_MATRIX_SIZE; i++)
         {
-            for (size_t j = 0; j < BRICK_SIZE; j++)
+            for (size_t j = 0; j < BRICK_MATRIX_SIZE; j++)
             {
                 char cell = shape.shape[i][j];
                 if (cell)
@@ -113,7 +113,6 @@ namespace Game
                     auto sprite = sf::Sprite();
                     sprite.setTexture(*texture);
                     sprite.setScale(sf::Vector2f(single_brick_size, single_brick_size));
-
                     sprite.setPosition(position + sf::Vector2f(j * single_brick_size, i * single_brick_size));
 
                     sprites.push_back(std::move(sprite));
@@ -172,9 +171,9 @@ namespace Game
     {
         size_t sprite_index = 0;
 
-        for (size_t i = 0; i < BRICK_SIZE; i++)
+        for (size_t i = 0; i < BRICK_MATRIX_SIZE; i++)
         {
-            for (size_t j = 0; j < BRICK_SIZE; j++)
+            for (size_t j = 0; j < BRICK_MATRIX_SIZE; j++)
             {
                 char cell = shape.shape[i][j];
                 if (cell)
@@ -189,15 +188,15 @@ namespace Game
 
     void BrickShape::rotate_clockwise()
     {
-        for (int i = 0; i < BRICK_SIZE / 2; i++)
+        for (int i = 0; i < BRICK_MATRIX_SIZE / 2; i++)
         {
-            for (int j = i; j < BRICK_SIZE - i - 1; j++)
+            for (int j = i; j < BRICK_MATRIX_SIZE - i - 1; j++)
             {
                 int temp = shape[i][j];
-                shape[i][j] = shape[BRICK_SIZE - 1 - j][i];
-                shape[BRICK_SIZE - 1 - j][i] = shape[BRICK_SIZE - 1 - i][BRICK_SIZE - 1 - j];
-                shape[BRICK_SIZE - 1 - i][BRICK_SIZE - 1 - j] = shape[j][BRICK_SIZE - 1 - i];
-                shape[j][BRICK_SIZE - 1 - i] = temp;
+                shape[i][j] = shape[BRICK_MATRIX_SIZE - 1 - j][i];
+                shape[BRICK_MATRIX_SIZE - 1 - j][i] = shape[BRICK_MATRIX_SIZE - 1 - i][BRICK_MATRIX_SIZE - 1 - j];
+                shape[BRICK_MATRIX_SIZE - 1 - i][BRICK_MATRIX_SIZE - 1 - j] = shape[j][BRICK_MATRIX_SIZE - 1 - i];
+                shape[j][BRICK_MATRIX_SIZE - 1 - i] = temp;
             }
         }
 
@@ -210,33 +209,33 @@ namespace Game
 
     void BrickShape::slide_left()
     {
-        for (size_t j = 0; j < BRICK_SIZE - 1; j++)
+        for (size_t j = 0; j < BRICK_MATRIX_SIZE - 1; j++)
         {
-            for (size_t i = 0; i < BRICK_SIZE; i++)
+            for (size_t i = 0; i < BRICK_MATRIX_SIZE; i++)
             {
                 shape[i][j] = shape[i][j + 1];
             }
         }
 
-        for (size_t i = 0; i < BRICK_SIZE; i++)
+        for (size_t i = 0; i < BRICK_MATRIX_SIZE; i++)
         {
-            shape[i][BRICK_SIZE - 1] = 0;
+            shape[i][BRICK_MATRIX_SIZE - 1] = 0;
         }
     }
 
     void BrickShape::slide_up()
     {
-        for (size_t i = 0; i < BRICK_SIZE - 1; i++)
+        for (size_t i = 0; i < BRICK_MATRIX_SIZE - 1; i++)
         {
-            for (size_t j = 0; j < BRICK_SIZE; j++)
+            for (size_t j = 0; j < BRICK_MATRIX_SIZE; j++)
             {
                 shape[i][j] = shape[i + 1][j];
             }
         }
 
-        for (size_t j = 0; j < BRICK_SIZE; j++)
+        for (size_t j = 0; j < BRICK_MATRIX_SIZE; j++)
         {
-            shape[BRICK_SIZE - 1][j] = 0;
+            shape[BRICK_MATRIX_SIZE - 1][j] = 0;
         }
     }
 
@@ -251,7 +250,7 @@ namespace Game
                 break;
             }
 
-            if (i == BRICK_SIZE - 1)
+            if (i == BRICK_MATRIX_SIZE - 1)
             {
                 slide_left();
                 i = 0;
@@ -271,7 +270,7 @@ namespace Game
                 break;
             }
 
-            if (j == BRICK_SIZE - 1)
+            if (j == BRICK_MATRIX_SIZE - 1)
             {
                 slide_up();
                 j = 0;
@@ -336,9 +335,9 @@ namespace Game
         width = 0;
 
         bool keep_looking = true;
-        for (int i = BRICK_SIZE - 1; i >= 0 && keep_looking; --i)
+        for (int i = BRICK_MATRIX_SIZE - 1; i >= 0 && keep_looking; --i)
         {
-            for (int j = BRICK_SIZE - 1; j >= 0 && keep_looking; --j)
+            for (int j = BRICK_MATRIX_SIZE - 1; j >= 0 && keep_looking; --j)
             {
                 if (shape[i][j])
                 {
@@ -349,9 +348,9 @@ namespace Game
         }
 
         keep_looking = true;
-        for (int j = BRICK_SIZE - 1; j >= 0 && keep_looking; --j)
+        for (int j = BRICK_MATRIX_SIZE - 1; j >= 0 && keep_looking; --j)
         {
-            for (int i = BRICK_SIZE - 1; i >= 0 && keep_looking; --i)
+            for (int i = BRICK_MATRIX_SIZE - 1; i >= 0 && keep_looking; --i)
             {
                 if (shape[i][j])
                 {

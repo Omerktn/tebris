@@ -9,7 +9,7 @@
 #include <array>
 #include <chrono>
 
-#define BRICK_SIZE 4
+#define BRICK_MATRIX_SIZE 4
 
 namespace Game
 {
@@ -34,7 +34,7 @@ namespace Game
     class BrickShape
     {
     public:
-        std::array<std::array<char, BRICK_SIZE>, BRICK_SIZE> shape = {0};
+        std::array<std::array<char, BRICK_MATRIX_SIZE>, BRICK_MATRIX_SIZE> shape = {0};
         size_t height;
         size_t width;
 
@@ -109,6 +109,8 @@ namespace Game
         Tebris();
 
         void update() override;
+
+        std::vector<Brick>::iterator current_brick;
 
     private:
         std::array<BrickShape, 7> brick_shapes;
