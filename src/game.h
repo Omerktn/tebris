@@ -66,7 +66,14 @@ namespace Game
         void move_down();
 
     private:
-        constexpr static const float single_brick_size = 50.0f;
+        constexpr static float single_brick_size = 50.0f;
+
+        constexpr static int left_border = 50;
+        constexpr static int right_border = 600;
+        constexpr static int upper_border = 50;
+        constexpr static int lower_border = 800;
+
+        void debug_print_pos();
     };
 
     class Scene

@@ -42,7 +42,7 @@ namespace Game
 
         auto yellow_texture = load_texture("../graphics/Yellow_box.png");
 
-        Brick a_brick(brick_shapes[3], yellow_texture, sf::Vector2f(25.0f, 25.0f));
+        Brick a_brick(brick_shapes[3], yellow_texture, sf::Vector2f(50.0f, 50.0f));
 
         a_brick.apply_sprite_positions();
 
@@ -122,24 +122,50 @@ namespace Game
         }
     };
 
+    void Brick::debug_print_pos()
+    {
+        std::cout << "Position X: " << position.x << "  Y: " << position.y
+                  << "  --  Width:" << shape.width << "  Height:" << shape.height << '\n';
+    }
+
     void Brick::move_right()
     {
-        position += sf::Vector2f(single_brick_size, 0.0f);
+        auto new_position = position + sf::Vector2f(single_brick_size, 0.0f);
+        if (new_position.x + (shape.width * single_brick_size) > right_border)
+            return;
+
+        position = new_position;
+        debug_print_pos();
     }
 
     void Brick::move_left()
     {
-        position += sf::Vector2f(-single_brick_size, 0.0f);
+        auto new_position = position + sf::Vector2f(-single_brick_size, 0.0f);
+        if (new_position.x < left_border)
+            return;
+
+        position = new_position;
+        debug_print_pos();
     }
 
     void Brick::move_up()
     {
-        position += sf::Vector2f(0.0f, -single_brick_size);
+        auto new_position = position + sf::Vector2f(0.0f, -single_brick_size);
+        if (new_position.y < upper_border)
+            return;
+
+        position = new_position;
+        debug_print_pos();
     }
 
     void Brick::move_down()
     {
-        position += sf::Vector2f(0.0f, single_brick_size);
+        auto new_position = position + sf::Vector2f(0.0f, single_brick_size);
+        if (new_position.y + (shape.height * single_brick_size) > lower_border)
+            return;
+
+        position = new_position;
+        debug_print_pos();
     }
 
     void Brick::apply_sprite_positions()
@@ -310,7 +336,6 @@ namespace Game
         width = 0;
 
         bool keep_looking = true;
-
         for (int i = BRICK_SIZE - 1; i >= 0 && keep_looking; --i)
         {
             for (int j = BRICK_SIZE - 1; j >= 0 && keep_looking; --j)
