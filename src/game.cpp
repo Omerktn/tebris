@@ -104,27 +104,6 @@ namespace Game
 
     GridObject::GridObject(BrickShape t_shape, sf::Vector2f t_pos) : shape(t_shape), position(t_pos) {}
 
-    Brick::Brick(BrickShape t_shape, std::shared_ptr<sf::Texture> t_texture, sf::Vector2f t_pos)
-        : GridObject(t_shape, t_pos), texture(t_texture)
-    {
-        for (size_t i = 0; i < BRICK_MATRIX_SIZE; i++)
-        {
-            for (size_t j = 0; j < BRICK_MATRIX_SIZE; j++)
-            {
-                char cell = shape.shape[i][j];
-                if (cell)
-                {
-                    auto sprite = sf::Sprite();
-                    sprite.setTexture(*texture);
-                    sprite.setScale(sf::Vector2f(single_brick_size, single_brick_size));
-                    sprite.setPosition(position + sf::Vector2f(j * single_brick_size, i * single_brick_size));
-
-                    sprites.push_back(std::move(sprite));
-                }
-            }
-        }
-    };
-
     void GridObject::debug_print_pos()
     {
         std::cout << "Position X: " << position.x << "  Y: " << position.y
@@ -170,6 +149,27 @@ namespace Game
         position = new_position;
         debug_print_pos();
     }
+
+    Brick::Brick(BrickShape t_shape, std::shared_ptr<sf::Texture> t_texture, sf::Vector2f t_pos)
+        : GridObject(t_shape, t_pos), texture(t_texture)
+    {
+        for (size_t i = 0; i < BRICK_MATRIX_SIZE; i++)
+        {
+            for (size_t j = 0; j < BRICK_MATRIX_SIZE; j++)
+            {
+                char cell = shape.shape[i][j];
+                if (cell)
+                {
+                    auto sprite = sf::Sprite();
+                    sprite.setTexture(*texture);
+                    sprite.setScale(sf::Vector2f(single_brick_size, single_brick_size));
+                    sprite.setPosition(position + sf::Vector2f(j * single_brick_size, i * single_brick_size));
+
+                    sprites.push_back(std::move(sprite));
+                }
+            }
+        }
+    };
 
     void Brick::apply_sprite_positions()
     {

@@ -14,6 +14,9 @@
 namespace Game
 {
 
+    template <typename Type, size_t row, size_t col>
+    using Matrix = std::array<std::array<Type, col>, row>;
+
     class Timer
     {
     public:
@@ -55,7 +58,7 @@ namespace Game
 
         BrickShape shape;
         sf::Vector2f position;
-        
+
         std::vector<sf::Sprite> sprites;
 
         virtual void apply_sprite_positions() = 0;
@@ -97,6 +100,11 @@ namespace Game
 
         std::map<std::string, std::shared_ptr<sf::Drawable>> objects;
         std::vector<Brick> brick_objects;
+
+        constexpr static size_t grid_height = 15;
+        constexpr static size_t grid_width = 10;
+
+        Matrix<std::shared_ptr<GridObject>, grid_width, grid_height> grid_objects;
 
     protected:
         template <typename ShapeType, typename... ArgType>
