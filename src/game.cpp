@@ -102,8 +102,56 @@ namespace Game
         return false;
     }
 
+    GridObject::GridObject(BrickShape t_shape, sf::Vector2f t_pos) : shape(t_shape), position(t_pos) {}
+
+    void GridObject::debug_print_pos()
+    {
+        std::cout << "Position X: " << position.x << "  Y: " << position.y
+                  << "  --  Width:" << shape.width << "  Height:" << shape.height << '\n';
+    }
+
+    void GridObject::move_right()
+    {
+        auto new_position = position + sf::Vector2f(single_brick_size, 0.0f);
+        if (new_position.x + (shape.width * single_brick_size) > right_border)
+            return;
+
+        position = new_position;
+        debug_print_pos();
+    }
+
+    void GridObject::move_left()
+    {
+        auto new_position = position + sf::Vector2f(-single_brick_size, 0.0f);
+        if (new_position.x < left_border)
+            return;
+
+        position = new_position;
+        debug_print_pos();
+    }
+
+    void GridObject::move_up()
+    {
+        auto new_position = position + sf::Vector2f(0.0f, -single_brick_size);
+        if (new_position.y < upper_border)
+            return;
+
+        position = new_position;
+        debug_print_pos();
+    }
+
+    void GridObject::move_down()
+    {
+        auto new_position = position + sf::Vector2f(0.0f, single_brick_size);
+        if (new_position.y + (shape.height * single_brick_size) > lower_border)
+            return;
+
+        position = new_position;
+        debug_print_pos();
+    }
+
     Brick::Brick(BrickShape t_shape, std::shared_ptr<sf::Texture> t_texture, sf::Vector2f t_pos)
-        : shape(t_shape), texture(t_texture), position(t_pos)
+        : GridObject(t_shape, t_pos), texture(t_texture)
     {
         for (size_t i = 0; i < BRICK_MATRIX_SIZE; i++)
         {
@@ -122,52 +170,6 @@ namespace Game
             }
         }
     };
-
-    void Brick::debug_print_pos()
-    {
-        std::cout << "Position X: " << position.x << "  Y: " << position.y
-                  << "  --  Width:" << shape.width << "  Height:" << shape.height << '\n';
-    }
-
-    void Brick::move_right()
-    {
-        auto new_position = position + sf::Vector2f(single_brick_size, 0.0f);
-        if (new_position.x + (shape.width * single_brick_size) > right_border)
-            return;
-
-        position = new_position;
-        debug_print_pos();
-    }
-
-    void Brick::move_left()
-    {
-        auto new_position = position + sf::Vector2f(-single_brick_size, 0.0f);
-        if (new_position.x < left_border)
-            return;
-
-        position = new_position;
-        debug_print_pos();
-    }
-
-    void Brick::move_up()
-    {
-        auto new_position = position + sf::Vector2f(0.0f, -single_brick_size);
-        if (new_position.y < upper_border)
-            return;
-
-        position = new_position;
-        debug_print_pos();
-    }
-
-    void Brick::move_down()
-    {
-        auto new_position = position + sf::Vector2f(0.0f, single_brick_size);
-        if (new_position.y + (shape.height * single_brick_size) > lower_border)
-            return;
-
-        position = new_position;
-        debug_print_pos();
-    }
 
     void Brick::apply_sprite_positions()
     {
