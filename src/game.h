@@ -47,25 +47,25 @@ namespace Game
         void slide_up();
     };
 
-    class Brick
+    class GridObject
     {
     public:
-        Brick() = delete;
-        Brick(BrickShape t_shape, std::shared_ptr<sf::Texture> t_texture, sf::Vector2f t_pos);
+        GridObject() = delete;
+        GridObject(BrickShape t_shape, sf::Vector2f t_pos);
 
         BrickShape shape;
-        std::shared_ptr<sf::Texture> texture;
         sf::Vector2f position;
+        
         std::vector<sf::Sprite> sprites;
 
-        void apply_sprite_positions();
+        virtual void apply_sprite_positions() = 0;
 
         void move_right();
         void move_left();
         void move_up();
         void move_down();
 
-    private:
+    protected:
         constexpr static float single_brick_size = 50.0f;
 
         constexpr static int left_border = 50;
@@ -74,6 +74,18 @@ namespace Game
         constexpr static int lower_border = 800;
 
         void debug_print_pos();
+    };
+
+    class Brick : public GridObject
+    {
+    public:
+        Brick() = delete;
+        Brick(BrickShape t_shape, std::shared_ptr<sf::Texture> t_texture, sf::Vector2f t_pos);
+
+        std::shared_ptr<sf::Texture> texture;
+
+    public:
+        void apply_sprite_positions() override;
     };
 
     class Scene
