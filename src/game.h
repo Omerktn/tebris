@@ -104,7 +104,7 @@ namespace Game
         constexpr static size_t grid_height = 15;
         constexpr static size_t grid_width = 10;
 
-        Matrix<std::shared_ptr<GridObject>, grid_width, grid_height> grid_objects;
+        Matrix<std::shared_ptr<std::weak_ptr<sf::Sprite>>, grid_width, grid_height> grid;
 
     protected:
         template <typename ShapeType, typename... ArgType>
